@@ -5,6 +5,7 @@
         <q-toolbar>
           <q-btn v-if="$route.fullPath.includes('/chat')" flat dense to ='/' icon="arrow_back" label="Back" />
           <q-toolbar-title class="absolute-center">{{ title }}</q-toolbar-title>
+          <q-btn  flat dense to ='/auth' icon="account_circle" class="absolute-right q-pr-sm" label="Login" />
         </q-toolbar>
       </q-header>
       <router-view />
