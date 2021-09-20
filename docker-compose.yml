@@ -1,0 +1,19 @@
+# for local development
+version: "3.7"
+networks:
+  cila-dev:
+    external: true
+
+services:
+  example-ui:
+    build:
+      context: .
+      target: "develop-stage"
+    volumes:
+      - ".:/app"
+    command: /bin/sh -c "yarn && yarn dev"
+    networks:
+      - cila-dev
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.whizant-ui.rule=Host(`example.cila.test`)
