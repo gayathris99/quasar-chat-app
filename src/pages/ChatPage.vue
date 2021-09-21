@@ -1,12 +1,12 @@
 <template>
   <q-page class="flex column">
-    <q-banner class="text-center bg-grey-4">
-     User offline
+    <q-banner v-if="!otherUserDetails.online" class="text-center bg-grey-4">
+     {{otherUserDetails.name}} is offline
     </q-banner>
     <div class="q-pa-md column col justify-end">
       <q-chat-message v-for="message in messages"
-        :key="message"
-        :name="message.from"
+        :key="message.id"
+        :name="message.from == 'me' ? userDetails.name : otherUserDetails.name"
         :text="[message.text]"
         :sent ="message.from == 'me' ? true: false"
       />
@@ -26,34 +26,40 @@
 </template>
 
 <script>
+import {mapActions, mapState} from 'vuex'
 export default {
   data() {
-    return {
-      newMessage: "",
-      messages: [
-        {
-          text: "Hello",
-          from: "me"
-        },
-        {
-          text: "Hey Long time",
-          from: "them"
-        },
-        {
-          text: "Yes! How are you?",
-          from: "me"
-        },
-      ]
+    return{
+      newMessage: ""
     }
   },
   methods: {
+    ...mapActions('user', ['firebaseGetMessages','firebaseStopMessages','firebaseSendMessage']),
     sendMessage() {
-      this.messages.push({
-        text: this.newMessage,
-        from: "me"
+      this.firebaseSendMessage({
+        message: {
+          text: this.newMessage,
+          from: "me",
+          timestamp: Date.now()
+
+        },
+        otherUserId: this.$route.params.otherUserId
       })
       this.newMessage = ''
     }
+  },
+  mounted() {
+    this.firebaseStopMessages()
+    this.firebaseGetMessages(this.$route.params.otherUserId)
+  },
+  computed: {
+    ...mapState('user',['messages','userDetails']),
+    otherUserDetails() {
+       return this.$store.state.user.users[this.$route.params.otherUserId]
+    }
+  },
+  destroyed() {
+    this.firebaseStopMessages()
   }
 };
 </script>
