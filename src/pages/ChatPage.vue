@@ -41,7 +41,6 @@ export default {
           text: this.newMessage,
           from: "me",
           timestamp: Date.now()
-
         },
         otherUserId: this.$route.params.otherUserId
       })

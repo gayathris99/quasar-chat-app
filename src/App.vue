@@ -7,7 +7,8 @@
 import {mapActions} from 'vuex'
 export default {
   methods: {
-  ...mapActions('user', ['handleAuthStateChanged'])
+  ...mapActions('user', ['handleAuthStateChanged']),
+    
   },
   mounted() {
     this.handleAuthStateChanged()
