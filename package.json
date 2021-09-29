@@ -16,7 +16,6 @@
     "axios": "^0.21.4",
     "axios-auth-refresh": "^3.0.0",
     "core-js": "^3.6.5",
-    "dotenv": "^10.0.0",
     "firebase": "^8.2.9",
     "qs": "^6.9.4",
     "quasar": "^1.0.0"

@@ -11,7 +11,8 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex';
+import {mapActions,mapState} from 'vuex';
+
 export default {
     props: ['tab'],
     data() {
@@ -19,16 +20,18 @@ export default {
             formData: {
                 name: '',
                 email: '',
-                password: ''
+                password: '',
             }
         }
       
     },
+
     methods: {
         ...mapActions('user', ['registerUser', 'loginUser']),
         submitForm() {
             if (this.tab == 'login') {
                 this.loginUser(this.formData)
+                
             }
             else {
                 this.registerUser(this.formData)
