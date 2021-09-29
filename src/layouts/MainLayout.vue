@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { firebaseAuth } from 'src/boot/firebase'
 import {mapState,mapActions} from 'vuex'
 
 export default {
@@ -34,7 +35,25 @@ export default {
     
   },
   methods: {
-    ...mapActions('user',['logoutUser'])
+    ...mapActions('user',['logoutUser','firebaseUpdateUser']),
+       closeBrowser (evt) {
+        this.firebaseUpdateUser({
+          userId: firebaseAuth.currentUser.uid,
+          updates: {
+            online:false
+          }
+        })
+        return;
+
+       }
+  
+},
+
+ 
+
+  created() {
+    window.addEventListener('beforeunload', this.closeBrowser)
   }
+
 }
 </script>

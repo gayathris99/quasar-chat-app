@@ -1,28 +1,36 @@
 import { removeToken, setToken } from 'src/utils/auth'
 import { firebaseAuth, firebaseDb } from 'src/boot/firebase'
+import { Loading } from 'quasar'
+
 
 
 
 export function registerUser({},payload) {
+  Loading.show()
   firebaseAuth.createUserWithEmailAndPassword(payload.email, payload.password)
   .then(response => {
     const userID = firebaseAuth.currentUser.uid
     firebaseDb.collection("users").doc(userID).set({
       name: payload.name,
       email:payload.email,
-      online: true
+      online: true,
     })
-
+    Loading.hide()
   })
   .catch(error => {})
 }
 
-export function loginUser({},payload) {
+export function loginUser({state},payload) {
+    Loading.show()
     firebaseAuth.signInWithEmailAndPassword(payload.email, payload.password)
     .then(response => {
+      Loading.hide()
       this.$router.push('/chat')
     })
-    .catch(error => {})
+    .catch(error => {
+      Loading.hide()
+      state.wrongCredentials = true
+    })
 }
 
 export function logoutUser() {
@@ -93,30 +101,33 @@ export function firebaseGetUsers({commit}) {
 
 export function firebaseGetMessages({state,commit},otherUserId) {
   let userId = state.userDetails.userId
+  let messageDetails = {}
   firebaseDb.collection("chats/").doc(userId).collection(otherUserId)
   .orderBy("timestamp")
   .onSnapshot(snapshot => {
     snapshot.docChanges().forEach(change=> {
-      if (change.type == 'added') {
-        let messageDetails = change.doc.data()
+      if (change.type == 'added' || change.type == 'modified') {
+        let messageDetail = change.doc.data()
         let messageId = change.doc.id
-        commit('addMessage', {
-        messageDetails,
-        messageId
-      })
+        messageDetails[messageId] = messageDetail 
       }
     })
+    commit('addMessage',messageDetails)
   })
 }
 
-export function firebaseSendMessage({state}, payload) {
+
+
+export function firebaseSendMessage({state,dispatch}, payload) {
   firebaseDb.collection("chats").doc(state.userDetails.userId).collection(payload.otherUserId)
   .add(payload.message)
   payload.message.from = 'them'
   firebaseDb.collection("chats").doc(payload.otherUserId).collection(state.userDetails.userId)
   .add(payload.message)
+  dispatch('firebaseGetMessages',payload.otherUserId)
 }
 
 export function firebaseStopMessages({commit}) {
   commit('stopMessages',{})
 }
+
