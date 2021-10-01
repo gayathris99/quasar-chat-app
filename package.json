@@ -18,7 +18,8 @@
     "core-js": "^3.6.5",
     "firebase": "^8.2.9",
     "qs": "^6.9.4",
-    "quasar": "^1.0.0"
+    "quasar": "^1.0.0",
+    "vue-chat-scroll": "^1.4.0"
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",

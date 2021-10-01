@@ -1,18 +1,18 @@
 <template>
   <q-page class="flex column" id = "chatpage"> 
     <q-scroll-area
-              ref="first"
+              ref="chatScroll"
               style="height: 555px"
-              :delay="0"
-              @scroll="onScrollFirst"
+              :delay="350"
+              
             >
     <q-banner v-if="!otherUserDetails.online" class="text-center bg-grey-4">
      {{otherUserDetails.name}} is offline
     </q-banner>
-    <div class="q-pa-md column col justify-end ">
+    <div class="q-pa-md column col justify-end " >
       <q-chat-message v-for="message in messages"
         :key="message.id"
-        :name="message.from == 'me' ? userDetails.name : otherUserDetails.name"
+        
         :text="[message.text]"
         :stamp = message.timestamp
         :sent ="message.from == 'me' ? true: false"
@@ -34,6 +34,7 @@
 </template>
 
 <script>
+
 import {mapActions, mapState,mapMutations} from 'vuex'
 export default {
   data() {
@@ -44,6 +45,12 @@ export default {
   },
   methods: {
     ...mapActions('user', ['firebaseGetMessages','firebaseStopMessages','firebaseSendMessage','onChatPage']),
+      scroll () {
+        const scrollArea = this.$refs.chatScroll
+        const scrollTarget = scrollArea.getScrollTarget()
+        const duration = 0
+        scrollArea.setScrollPosition(scrollTarget.scrollHeight, duration)
+},
     sendMessage() {
         this.firebaseSendMessage({
         message: {
@@ -55,21 +62,20 @@ export default {
         otherUserId: this.$route.params.otherUserId
       })
       this.newMessage = ''
-    },
-    scroll (source, position) {
-      this.$refs[source].setScrollPosition(position)
+      this.scroll()
     },
 
-    onScrollFirst ({ verticalPosition }) {
-      this.position = verticalPosition 
-      this.scroll('first', verticalPosition + 300)
-    },
+
   },
-
   mounted() {
     this.firebaseStopMessages()
     this.firebaseGetMessages(this.$route.params.otherUserId)
+   
  
+  },
+
+  updated() {
+    this.scroll()
   },
 
   computed: {
@@ -85,4 +91,5 @@ export default {
   }
 };
 </script>
+
 

@@ -21,6 +21,7 @@ export default {
                 name: '',
                 email: '',
                 password: '',
+                msgtimestamp: ''
             }
         }
       

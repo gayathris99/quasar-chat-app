@@ -32,10 +32,17 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters,mapActions} from 'vuex'
 	export default {
 	  computed: {
 		  ...mapGetters('user',['users'])
+	  },
+	  mounted() {
+		  this.firebaseGetUsers()
+	  },
+
+	  methods: {
+		  ...mapActions('user',['firebaseGetUsers'])
 	  }
 	}
 </script>

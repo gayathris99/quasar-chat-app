@@ -14,6 +14,7 @@ export function registerUser({},payload) {
       name: payload.name,
       email:payload.email,
       online: true,
+      msgTimestamp: payload.msgtimestamp
     })
     Loading.hide()
   })
@@ -41,7 +42,7 @@ export function handleAuthStateChanged({commit , dispatch,state}) {
   firebaseAuth.onAuthStateChanged(user => {
       if (user) {
       const userID = firebaseAuth.currentUser.uid
-      firebaseDb.collection("users").doc(userID)
+      firebaseDb.collection("users").doc(userID) 
       .get()
       .then(doc => {
         const userDetails = doc.data()
@@ -79,22 +80,33 @@ export function firebaseUpdateUser({},payload) {
 
 
 export function firebaseGetUsers({commit}) {
+  let userDetails = {}
   firebaseDb.collection("users").onSnapshot(snapshot => {
     snapshot.docChanges().forEach(change => {
-      if(change.type == "added") {
-          let userDetails = change.doc.data()
+      if(change.type == "added" ) {
           let userId = change.doc.id;
-          commit('addUser', {userId,userDetails})
+          let currentUserId = firebaseAuth.currentUser.uid
+          if ( userId != currentUserId ){
+            let userDetails = change.doc.data()
+            firebaseDb.collection("chats").doc(currentUserId).collection(userId).orderBy("timestamp", "desc").limit(1)
+            .get().then(snapshot => {
+              snapshot.forEach(doc => {
+                if(doc.exists) {
+                  let lastMsgTimeStamp = doc.data().timestamp
+                  userDetails.msgTimestamp = lastMsgTimeStamp
+                  commit('addUser', {userId,userDetails})
+                }
+              })
+            })
+            commit('addUser', {userId,userDetails})  
+          }
+          
       }
-    })
-  })
-  firebaseDb.collection("users").onSnapshot(snapshot => {
-    snapshot.docChanges().forEach(change => {
       if(change.type == "modified") {
-          let userDetails = change.doc.data()
-          let userId = change.doc.id;
-          commit('updateUser', {userId,userDetails})
-      }
+        let userDetails = change.doc.data()
+        let userId = change.doc.id;
+        commit('updateUser', {userId,userDetails})
+    }
     })
   })
 }
@@ -118,13 +130,14 @@ export function firebaseGetMessages({state,commit},otherUserId) {
 
 
 
-export function firebaseSendMessage({state,dispatch}, payload) {
+export function firebaseSendMessage({state,dispatch,commit}, payload) {
   firebaseDb.collection("chats").doc(state.userDetails.userId).collection(payload.otherUserId)
   .add(payload.message)
   payload.message.from = 'them'
   firebaseDb.collection("chats").doc(payload.otherUserId).collection(state.userDetails.userId)
   .add(payload.message)
   dispatch('firebaseGetMessages',payload.otherUserId)
+
 }
 
 export function firebaseStopMessages({commit}) {
