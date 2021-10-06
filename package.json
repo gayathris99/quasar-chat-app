@@ -12,6 +12,7 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
+    "@capacitor/core": "^3.2.4",
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.4",
     "axios-auth-refresh": "^3.0.0",
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@quasar/app": "^2.0.0",
     "@quasar/quasar-app-extension-dotenv": "^1.0.5",
+    "@vue/devtools": "^5.3.4",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.9.0",

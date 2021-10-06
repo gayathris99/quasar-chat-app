@@ -1,8 +1,8 @@
 export default function() {
   return {
-    userDetails : {},
+    userDetails: {},
     users: {},
     messages: {},
-
+    url: ''
   }
 }
