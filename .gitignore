@@ -33,5 +33,5 @@ yarn-error.log*
 *.sln
 .history
 .vscode
-
+dist
 .env
