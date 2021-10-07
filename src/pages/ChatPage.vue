@@ -20,6 +20,7 @@
             :src="message.url"
             height="125px"
             width="300px"
+            @click="fullImage(message.url)"
           />
         </q-chat-message>
 
@@ -39,6 +40,7 @@
           <img
             v-if="message.url"
             :src="message.url"
+            @click="fullImage(message.url)"
             height="125px"
             width="300px"
           />
@@ -113,6 +115,9 @@ export default {
       'uploadPhoto',
       'deleteImageUrl'
     ]),
+    fullImage(url) {
+      window.location.href = url
+    },
     scroll() {
       const scrollArea = this.$refs.chatScroll
       const scrollTarget = scrollArea.getScrollTarget()
