@@ -3,6 +3,7 @@ export default function() {
     userDetails: {},
     users: {},
     messages: {},
-    url: ''
+    url: '',
+    sortedUsers: {}
   }
 }

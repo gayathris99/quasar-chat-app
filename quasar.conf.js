@@ -19,9 +19,7 @@ module.exports = function(/* ctx */) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
-    boot: [
-      'firebase'
-    ],
+    boot: ['firebase'],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: ['app.scss'],
@@ -119,8 +117,8 @@ module.exports = function(/* ctx */) {
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {}, // only for GenerateSW
       manifest: {
-        name: `Example`,
-        short_name: `Example`,
+        name: `Chat App`,
+        short_name: `Chat App`,
         description: `Example ui `,
         display: 'standalone',
         orientation: 'portrait',
