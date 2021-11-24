@@ -15,11 +15,11 @@
           :stamp="message.timestamp"
           :sent="message.from == 'me' ? true : false"
         >
-          <img
+          <q-img
+            width="30vw"
+            height="30vw"
             v-if="message.url"
             :src="message.url"
-            height="125px"
-            width="300px"
             @click="fullImage(message.url)"
           />
         </q-chat-message>
@@ -37,12 +37,12 @@
           :stamp="message.timestamp"
           :sent="message.from == 'me' ? true : false"
         >
-          <img
+          <q-img
+            width="30vw"
+            height="30vw"
             v-if="message.url"
             :src="message.url"
             @click="fullImage(message.url)"
-            height="125px"
-            width="300px"
           />
         </q-chat-message>
       </div>
@@ -60,16 +60,6 @@
             :rows="1"
             input-style="max-height: 6em"
           >
-            <q-file
-              color="teal"
-              ref="myFileInput"
-              v-if="filePicker"
-              class="q-pa-sm"
-              filled
-              v-model="photo"
-              label="Add a file"
-            >
-            </q-file>
             <template v-slot:after>
               <q-btn
                 type="submit"
@@ -81,11 +71,12 @@
                 @click="sendMessage"
               />
               <q-btn
-                round
-                color="primquasaary"
-                icon="add"
-                @click="getFile"
-              ></q-btn>
+                color="white"
+                @click="captureImage()"
+                icon="photo_camera"
+                dense
+                flat
+              />
             </template>
           </q-input>
         </q-form>
@@ -95,15 +86,17 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import { mapActions, mapState, mapMutations } from 'vuex'
+import { decode } from 'base64-arraybuffer'
+import { mapActions, mapState } from 'vuex'
 import { firebaseAuth } from 'src/boot/firebase'
+import { Plugins, CameraResultType } from '@capacitor/core'
+const { Camera } = Plugins
+
 export default {
   data() {
     return {
       newMessage: '',
       objDiv: {},
-      filePicker: false,
       photo: null
     }
   },
@@ -115,18 +108,42 @@ export default {
       'uploadPhoto',
       'deleteImageUrl'
     ]),
-    fullImage(url) {
-      window.location.href = url
+    async captureImage() {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Base64
+      })
+
+      const blob = new Blob([new Uint8Array(decode(image.base64String))], {
+        type: `image/${image.format}`
+      })
+
+      const file = new File([blob], blob.size, {
+        type: blob.type
+      })
+
+      this.photo = file
+      this.sendMessage()
     },
+
     scroll() {
       const scrollArea = this.$refs.chatScroll
       const scrollTarget = scrollArea.getScrollTarget()
       const duration = 0
       scrollArea.setScrollPosition(scrollTarget.scrollHeight, duration)
     },
-    getFile() {
-      this.filePicker = !this.filePicker
+
+    fullImage(url) {
+      console.log('url', url)
+      this.$router.push({
+        name: 'Images',
+        params: {
+          url: url
+        }
+      })
     },
+
     sendMessage() {
       if (this.photo) {
         const photo = this.photo
@@ -144,21 +161,23 @@ export default {
           }
         })
       } else {
-        this.firebaseSendMessage({
-          message: {
-            text: this.newMessage,
-            from: 'me',
-            timestamp: Date.now()
-          },
-          otherUserId: this.$route.params.otherUserId
-        })
+        if (this.newMessage === '') {
+        } else {
+          this.firebaseSendMessage({
+            message: {
+              text: this.newMessage,
+              from: 'me',
+              timestamp: Date.now()
+            },
+            otherUserId: this.$route.params.otherUserId
+          })
+        }
       }
 
       this.newMessage = ''
       this.photo = null
       this.deleteImageUrl()
       this.scroll()
-      this.filePicker = false
     }
   },
   mounted() {

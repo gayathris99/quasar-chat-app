@@ -62,7 +62,7 @@ export function handleAuthStateChanged({ commit, dispatch, state }) {
           online: true
         }
       })
-      dispatch('firebaseGetUsers')
+      //dispatch('firebaseGetUsers')
       this.$router.push('/')
     } else {
       dispatch('firebaseUpdateUser', {
@@ -119,6 +119,8 @@ export function firebaseGetUsers({ commit }) {
       }
     })
   })
+  // Loading.hide()
+  // commit('sortUsers')
 }
 
 export function firebaseGetMessages({ state, commit }, otherUserId) {
@@ -161,6 +163,7 @@ export function firebaseStopMessages({ commit }) {
 }
 
 export function uploadPhoto({ dispatch, commit }, payload) {
+  Loading.show()
   let ref = firebaseStorage
     .ref()
     .child(`${payload.userId}/${payload.otherUserId}/${payload.photo.name}`)
@@ -172,6 +175,7 @@ export function uploadPhoto({ dispatch, commit }, payload) {
       let otherUserId = payload.otherUserId
       dispatch('firebaseSendMessage', { message, otherUserId })
     })
+    Loading.hide()
   })
 }
 

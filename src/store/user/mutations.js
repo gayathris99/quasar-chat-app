@@ -41,3 +41,6 @@ export function updateImgUrl(state, url) {
 export function deleteUrl(state) {
   state.url = ''
 }
+export function removeUsers(state) {
+  state.users = {}
+}

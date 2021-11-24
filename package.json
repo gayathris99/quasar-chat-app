@@ -2,7 +2,7 @@
   "name": "example-ui",
   "version": "0.0.1",
   "description": "UI Starter kit for CILA Incubator",
-  "productName": "Example",
+  "productName": "Chat App",
   "author": "Rudra <ramrudra.p@gmail.com>",
   "private": true,
   "scripts": {
@@ -12,7 +12,9 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@capacitor/core": "^3.2.4",
+    "@capacitor/android": "^2.5.0",
+    "@capacitor/cli": "^2.5.0",
+    "@capacitor/core": "^2.5.0",
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.4",
     "axios-auth-refresh": "^3.0.0",
@@ -20,11 +22,13 @@
     "firebase": "^8.2.9",
     "qs": "^6.9.4",
     "quasar": "^1.0.0",
+    "v-img": "^0.2.0",
     "vue-chat-scroll": "^1.4.0"
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",
     "@quasar/quasar-app-extension-dotenv": "^1.0.5",
+    "@quasar/quasar-app-extension-qzoom": "^1.0.0-alpha.7",
     "@vue/devtools": "^5.3.4",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.8.0",
